@@ -11,55 +11,60 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach(async (to, from) => {
+router.beforeEach( (to, from,next) => {
   if (config.loginRouteName === to.name) {
-    return true
+    next()
   }
 
   let provider = to.meta.provider
 
-  let login = await localforage.getItem('token' + provider).then(token => {
-    if (!token || !token.hasOwnProperty('token')) {
-      router.push({name: config.loginRouteName})
-      return false
-    }
+  let login = new Promise((resolve, reject) => {
+    localforage.getItem('token' + provider).then(token => {
+      if (!token || !token.hasOwnProperty('token')) {
+        reject({name: config.loginRouteName})
+      }
 
-    if (!store.getters.token) {
-      store.commit('SET_TOKEN', {token, provider})
-    }
+      if (!store.getters.token) {
+        store.commit('SET_TOKEN', {token, provider})
+        resolve()
+      }
 
-    return true
-  }).catch(err => {
-    messageError({
-      message: err,
-      type: 'error'
+      resolve()
+    }).catch(err => {
+      reject(err)
     })
-    return false
   })
 
-  let permission = await localforage.getItem('permissions' + to.meta.provider).then(permissions => {
-    if (!to.meta.permission) {
-      return true
-    }
+  let permission = new Promise((resolve, reject) => {
+    localforage.getItem('permissions' + to.meta.provider).then(permissions => {
+      if (!to.meta.permission) {
+        resolve()
+      }
 
-    if (permissions && permissions.indexOf(to.meta.permission) < 0) {
+      if (permissions && permissions.indexOf(to.meta.permission) < 0) {
+        reject(`用户没有正确的权限- ${to.meta.permission}`)
+      }
+
+      resolve()
+    }).catch(err => {
+      reject(error)
+    })
+  })
+
+  Promise.all([login, permission]).then( result => {
+    next()
+  }).catch( error => {
+    let varType = typeof error;
+    if (varType === 'object') {
+      next({name: error.name})
+    } else {
       messageError({
-        message: 'User does not have the right permissions.',
+        message: error,
         type: 'error'
       })
-      return false
+      next({name: from.name})
     }
-
-    return true
-  }).catch(err => {
-    messageError({
-      message: err,
-      type: 'error'
-    })
-    return false
   })
-
-  return login && permission
 })
 
 export default router;
