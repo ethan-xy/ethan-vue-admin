@@ -7,11 +7,13 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 import router from '@/router'
 import store from '@/store'
+import Particles from "particles.vue3";
 import App from '@/App.vue'
 
 const app = createApp(App)
   .use(router)
   .use(store)
+  .use(Particles)
   .use(ElementPlus, {
     locale: zhCn,
   })

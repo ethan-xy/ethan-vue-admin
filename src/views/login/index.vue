@@ -1,5 +1,10 @@
 <template>
-  <div class="login-wrap">
+  <Particles
+      id="tsparticles"
+      :particlesInit="particlesInit"
+      :options="options"
+  />
+  <div>
     <div class="ms-login">
       <div class="ms-title">后台管理系统</div>
       <el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
@@ -41,6 +46,7 @@
   import {Lock, User} from '@element-plus/icons'
   import config from '@/config'
   import {messageSuccess} from '@/utils/helper'
+  import { loadFull } from "tsparticles";
 
   export default {
     components: {Lock, User},
@@ -76,26 +82,104 @@
             })
           }
         });
-      };
+      }
+
+      const particlesInit = async (engine) => {
+        await loadFull(engine);
+      }
+
+      const options = {
+        background: {
+          color: {
+            value: '#0d47a1'
+          }
+        },
+        fpsLimit: 120,
+        interactivity: {
+          events: {
+            onClick: {
+              enable: true,
+              mode: 'push'
+            },
+            onHover: {
+              enable: true,
+              mode: 'repulse'
+            },
+            resize: true
+          },
+          modes: {
+            bubble: {
+              distance: 400,
+              duration: 2,
+              opacity: 0.8,
+              size: 40
+            },
+            push: {
+              quantity: 4
+            },
+            repulse: {
+              distance: 200,
+              duration: 0.4
+            }
+          }
+        },
+        particles: {
+          color: {
+            value: '#ffffff'
+          },
+          links: {
+            color: '#ffffff',
+            distance: 150,
+            enable: true,
+            opacity: 0.5,
+            width: 1
+          },
+          collisions: {
+            enable: true
+          },
+          move: {
+            direction: 'none',
+            enable: true,
+            outModes: {
+              default: 'bounce'
+            },
+            random: false,
+            speed: 6,
+            straight: false
+          },
+          number: {
+            density: {
+              enable: true,
+              area: 800
+            },
+            value: 80
+          },
+          opacity: {
+            value: 0.5
+          },
+          shape: {
+            type: 'circle'
+          },
+          size: {
+            value: { min: 1, max: 5 },
+          }
+        },
+        detectRetina: true
+      }
+
       return {
         param,
         rules,
         login,
         submitForm,
+        options,
+        particlesInit
       };
     },
   };
 </script>
 
 <style scoped>
-  .login-wrap {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    /*background-image: url(../assets/img/login-bg.jpg);*/
-    background: #000;
-    background-size: 100%;
-  }
 
   .ms-title {
     width: 100%;
