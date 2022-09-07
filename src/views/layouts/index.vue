@@ -4,7 +4,7 @@
       <el-scrollbar height="100%">
         <h1 class="web-name" STYLE="color: rgb(191, 187, 187);text-align: center">
           <span v-if="isCollapse">E</span>
-          <span v-else>ETHAN ADMIN</span>
+          <span v-else>Ethan Admin</span>
         </h1>
         <el-menu
             :style="isCollapse ? 'width: 66px' : 'width: 211px'"
@@ -17,23 +17,7 @@
             @open="handleOpen"
             @close="handleClose"
         >
-          <view v-for="(menu, index) in menuItems">
-            <el-sub-menu :index="'1'+index" :key="index" v-if="menu?.children">
-              <template #title>
-                <el-icon>
-                  <component :is="menu.icon"/>
-                </el-icon>
-                <span>{{menu.name}}</span>
-              </template>
-              <el-menu-item v-for="(val, i) in menu?.children" :index="val.uri">{{val.name}}</el-menu-item>
-            </el-sub-menu>
-            <el-menu-item v-else :index="menu.uri">
-              <el-icon>
-                <component :is="menu.icon"/>
-              </el-icon>
-              {{menu.name}}
-            </el-menu-item>
-          </view>
+          <menu-item v-for="(item, index) in this.menuItems" :item="item" :index="index"></menu-item>
         </el-menu>
       </el-scrollbar>
     </el-aside>
@@ -149,9 +133,12 @@ import {useStore} from 'vuex'
 import {useRoute, useRouter} from 'vue-router'
 import config from "@/config"
 import {myMenu} from "@/api/menu"
+import MenuItem from './../components/Menu/MenuItem.vue'
 
 export default({
-  components: {},
+  components: {
+    MenuItem
+  },
   props: {
     isCollapse: Boolean
   },
@@ -363,4 +350,9 @@ export default({
 .layouts .el-header {
   line-height: 60px;
 }
+
+.layouts .el-scrollbar__view {
+  height: 100%;
+}
+
 </style>

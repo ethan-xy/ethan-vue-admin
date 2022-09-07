@@ -56,7 +56,7 @@
       const param = reactive({
         username: null,
         password: null,
-        provider: 'admin'
+        provider: 'users'
       });
       const rules = {
         username: [
